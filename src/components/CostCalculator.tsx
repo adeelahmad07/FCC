@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { siteConfig, buildWhatsAppURL, getWhatsAppLink } from "@/lib/config";
+import { siteConfig, buildWhatsAppURL, buildBasePriceWhatsAppURL } from "@/lib/config";
 
 interface CostCalculatorProps {
   service: (typeof siteConfig.services)[0];
@@ -67,9 +67,7 @@ export default function CostCalculator({ service, onClose }: CostCalculatorProps
   const hasArea = areaNum > 0;
 
   const whatsappURL = hasBasePrice
-    ? getWhatsAppLink(
-        `Hi, I'd like a detailed quote for *${service.name}*.\n\nStarting Price: PKR ${(service.basePrice as number).toLocaleString()}\n\nPlease share final pricing after site inspection.`
-      )
+    ? buildBasePriceWhatsAppURL(service.name, service.basePrice as number)
     : buildWhatsAppURL(service.name, areaNum, unit, sqftEquivalent, estimatedCost);
 
   const handleClose = () => {

@@ -242,7 +242,7 @@ export const siteConfig = {
   },
 };
 
-// WhatsApp message builder for quote requests
+// WhatsApp message builder for rate-based quote requests
 export function buildWhatsAppURL(
   service: string,
   area: number,
@@ -250,17 +250,46 @@ export function buildWhatsAppURL(
   sqftEquivalent: number,
   estimatedCost: number
 ): string {
+  const areaLine = unit !== "sq ft"
+    ? `📐 *Property Area:* ${area} ${unit} (≈ ${sqftEquivalent.toLocaleString()} sq ft)`
+    : `📐 *Property Area:* ${area} sq ft`;
+
   const message =
-    `Hi, I'd like a detailed quote for *${service}*.\n\n` +
-    `Property Area: ${area} ${unit}${unit !== "sq ft" ? ` (≈ ${sqftEquivalent.toLocaleString()} sq ft)` : ""}\n` +
-    `Estimated Cost: PKR ${estimatedCost.toLocaleString()}\n\n` +
-    `Please share final pricing after site inspection.`;
+    `🛡️ *FALCON CHEMICAL CONSTRUCTION*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `📋 *Quote Request — ${service}*\n\n` +
+    `${areaLine}\n` +
+    `💰 *Estimated Cost:* PKR ${estimatedCost.toLocaleString()}\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Please share final pricing after site inspection.\n\n` +
+    `Thank you! 🙏`;
+
+  return `https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+// WhatsApp message for base-price services
+export function buildBasePriceWhatsAppURL(service: string, basePrice: number): string {
+  const message =
+    `🛡️ *FALCON CHEMICAL CONSTRUCTION*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `📋 *Quote Request — ${service}*\n\n` +
+    `💰 *Starting Price:* PKR ${basePrice.toLocaleString()}\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `I'd like a detailed quote for this service.\n` +
+    `Please share final pricing after site inspection.\n\n` +
+    `Thank you! 🙏`;
 
   return `https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 // General WhatsApp contact link
 export function getWhatsAppLink(message?: string): string {
-  const defaultMsg = "Hi, I'm interested in your waterproofing services. Please share details.";
+  const defaultMsg =
+    `🛡️ *FALCON CHEMICAL CONSTRUCTION*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `Assalam o Alaikum! 👋\n\n` +
+    `I'm interested in your waterproofing & chemical construction services.\n\n` +
+    `Please share details about your available services and pricing.\n\n` +
+    `Thank you! 🙏`;
   return `https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent(message || defaultMsg)}`;
 }
