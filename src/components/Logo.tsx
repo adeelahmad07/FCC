@@ -81,7 +81,7 @@ export default function Logo({ variant = "full", className = "", size = "md" }: 
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <FalconIcon />
-      <div className="hidden sm:block leading-tight">
+      <div className="leading-tight">
         <p className={`font-extrabold ${s.text} ${isWhite ? "text-white" : "text-primary"} tracking-tight`}>
           Falcon<span className={isWhite ? "text-white/70" : "text-accent"}> Chemical</span>
         </p>
