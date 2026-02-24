@@ -12,7 +12,7 @@ export const siteConfig = {
     shortName: "FCC",
     tagline: "Pakistan's Premier Waterproofing & Heat Proofing Experts",
     description:
-      "Industrial-grade chemical solutions for residential, commercial, and industrial properties across Punjab, KPK, and Azad Kashmir with guaranteed warranties.",
+      "Industrial-grade chemical solutions for residential, commercial, and industrial properties across Punjab, Sindh, KPK, and Azad Kashmir with guaranteed warranties.",
     yearsExperience: 25,
     totalSolutions: 500,
     warrantyYears: 5,
@@ -43,7 +43,7 @@ export const siteConfig = {
   ],
 
   // Service Areas
-  serviceAreas: ["Punjab", "KPK", "Azad Kashmir"],
+  serviceAreas: ["Punjab", "Sindh", "KPK", "Azad Kashmir"],
 
   // ============================================================
   // SERVICES - Edit rates, names, descriptions here

@@ -7,7 +7,7 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 export const metadata: Metadata = {
   title: "Falcon Chemical Construction | Waterproofing & Heat Proofing Experts",
   description:
-    "Pakistan's premier waterproofing and heat proofing experts. Industrial-grade chemical solutions for residential, commercial, and industrial properties across Punjab, KPK, and Azad Kashmir.",
+    "Pakistan's premier waterproofing and heat proofing experts. Industrial-grade chemical solutions for residential, commercial, and industrial properties across Punjab, Sindh, KPK, and Azad Kashmir.",
   keywords:
     "waterproofing, heat proofing, chemical construction, Pakistan, Islamabad, Lahore, roof waterproofing, heat insulation",
   openGraph: {
