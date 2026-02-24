@@ -1,14 +1,24 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { getWhatsAppLink } from "@/lib/config";
 
 export default function WhatsAppFloat() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <a
       href={getWhatsAppLink()}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-whatsapp hover:bg-whatsapp-hover rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110 animate-pulse-glow"
+      className={`fixed bottom-6 right-6 z-40 w-14 h-14 bg-whatsapp hover:bg-whatsapp-hover rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-700 hover:scale-110 animate-pulse-glow ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      }`}
       aria-label="Chat on WhatsApp"
     >
       <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
