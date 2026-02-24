@@ -29,12 +29,12 @@ export default function Logo({ variant = "full", className = "", size = "md" }: 
       {/* Shield Background */}
       <defs>
         <linearGradient id={`shield-grad-${variant}`} x1="0" y1="0" x2="64" y2="64">
-          <stop offset="0%" stopColor={isWhite ? "#ffffff" : "#e94560"} />
-          <stop offset="100%" stopColor={isWhite ? "#f0f0f0" : "#c13750"} />
+          <stop offset="0%" stopColor={isWhite ? "#ffffff" : "#2C74B3"} />
+          <stop offset="100%" stopColor={isWhite ? "#f0f0f0" : "#205295"} />
         </linearGradient>
         <linearGradient id={`falcon-grad-${variant}`} x1="20" y1="12" x2="44" y2="52">
-          <stop offset="0%" stopColor={isWhite ? "#1a1a2e" : "#ffffff"} />
-          <stop offset="100%" stopColor={isWhite ? "#16213e" : "#ffffffcc"} />
+          <stop offset="0%" stopColor={isWhite ? "#0a2647" : "#ffffff"} />
+          <stop offset="100%" stopColor={isWhite ? "#144272" : "#ffffffcc"} />
         </linearGradient>
       </defs>
 
@@ -48,7 +48,7 @@ export default function Logo({ variant = "full", className = "", size = "md" }: 
       <path
         d="M32 6L10 16.5v15c0 14.8 9.9 28.6 22 32 12.1-3.4 22-17.2 22-32v-15L32 6z"
         fill="none"
-        stroke={isWhite ? "#1a1a2e22" : "#ffffff22"}
+        stroke={isWhite ? "#0a264722" : "#ffffff22"}
         strokeWidth="1"
       />
 
@@ -66,7 +66,7 @@ export default function Logo({ variant = "full", className = "", size = "md" }: 
       />
 
       {/* Small shine */}
-      <circle cx="29" cy="42" r="1.5" fill={isWhite ? "#1a1a2e" : "#ffffff"} opacity="0.4" />
+      <circle cx="29" cy="42" r="1.5" fill={isWhite ? "#0a2647" : "#ffffff"} opacity="0.4" />
     </svg>
   );
 

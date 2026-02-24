@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #1a1a2e;
-  --color-primary-light: #16213e;
-  --color-accent: #e94560;
-  --color-accent-hover: #c13750;
-  --color-gold: #f5a623;
-  --color-dark: #0f0f23;
+  --color-primary: #0a2647;
+  --color-primary-light: #144272;
+  --color-accent: #2C74B3;
+  --color-accent-hover: #205295;
+  --color-gold: #e8a838;
+  --color-dark: #061325;
   --color-gray-light: #f8f9fa;
   --color-gray-medium: #6b7280;
   --color-whatsapp: #25d366;
@@ -252,7 +252,7 @@ html {
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+  box-shadow: 0 0 30px rgba(44, 116, 179, 0.3);
 }
 
 /* Section divider wave */
@@ -343,6 +343,6 @@ html {
 
 /* Particle-like dots background */
 .dots-bg {
-  background-image: radial-gradient(circle, rgba(233, 69, 96, 0.1) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(44, 116, 179, 0.1) 1px, transparent 1px);
   background-size: 30px 30px;
 }

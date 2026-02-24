@@ -11,12 +11,12 @@ interface ServiceImageProps {
 
 // Gradient fallbacks per category (shown while image loads or if it fails)
 const categoryGradients: Record<string, string> = {
-  "Heat Proofing": "from-orange-400 via-red-400 to-pink-500",
-  "Water Proofing": "from-blue-400 via-cyan-500 to-teal-500",
-  "Water Tank": "from-indigo-400 via-blue-500 to-cyan-500",
-  Washroom: "from-violet-400 via-purple-500 to-fuchsia-500",
-  Walls: "from-emerald-400 via-green-500 to-teal-600",
-  "Termite Control": "from-amber-400 via-orange-500 to-red-600",
+  "Heat Proofing": "from-amber-400 via-yellow-500 to-orange-500",
+  "Water Proofing": "from-blue-400 via-blue-500 to-cyan-500",
+  "Water Tank": "from-sky-400 via-blue-500 to-indigo-600",
+  Washroom: "from-slate-400 via-blue-400 to-sky-500",
+  Walls: "from-teal-400 via-cyan-500 to-blue-500",
+  "Termite Control": "from-amber-500 via-yellow-600 to-amber-700",
 };
 
 export default function ServiceImage({ category, imageUrl, className = "", overlay = true }: ServiceImageProps) {
