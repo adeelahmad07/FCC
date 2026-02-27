@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { siteConfig, buildWhatsAppURL, buildBasePriceWhatsAppURL } from "@/lib/config";
+import { siteConfig } from "@/lib/config";
 
 interface CostCalculatorProps {
   service: (typeof siteConfig.services)[0];
@@ -44,10 +44,57 @@ function ServiceModalIcon({ icon }: { icon: string }) {
   return <>{icons[icon] || icons.sun}</>;
 }
 
+function buildQuoteWhatsAppURL(
+  service: string,
+  details: {
+    area?: number;
+    unit?: string;
+    sqftEquivalent?: number;
+    estimatedCost?: number;
+    basePrice?: number;
+    name: string;
+    phone: string;
+    address: string;
+  }
+): string {
+  const { name, phone, address, basePrice, area, unit, sqftEquivalent, estimatedCost } = details;
+
+  let costSection = "";
+  if (basePrice) {
+    costSection = `💰 *Starting Price:* PKR ${basePrice.toLocaleString()}`;
+  } else if (area && unit && sqftEquivalent && estimatedCost) {
+    const areaLine = unit !== "sq ft"
+      ? `📐 *Property Area:* ${area} ${unit} (≈ ${sqftEquivalent.toLocaleString()} sq ft)`
+      : `📐 *Property Area:* ${area} sq ft`;
+    costSection = `${areaLine}\n💰 *Estimated Cost:* PKR ${estimatedCost.toLocaleString()}`;
+  }
+
+  const customerLines = [
+    name ? `👤 *Name:* ${name}` : "",
+    phone ? `📞 *Phone:* ${phone}` : "",
+    address ? `📍 *Address:* ${address}` : "",
+  ].filter(Boolean).join("\n");
+
+  const message =
+    `🛡️ *FALCON CHEMICAL CONSTRUCTION*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `📋 *Quote Request — ${service}*\n\n` +
+    `${costSection}\n\n` +
+    (customerLines ? `${customerLines}\n\n` : "") +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Please share final pricing after site inspection.\n\n` +
+    `Thank you! 🙏`;
+
+  return `https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
 export default function CostCalculator({ service, onClose }: CostCalculatorProps) {
   const [area, setArea] = useState<string>("5");
   const [unit, setUnit] = useState<string>("marla");
   const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
 
   const hasBasePrice = "basePrice" in service && typeof service.basePrice === "number";
 
@@ -66,14 +113,21 @@ export default function CostCalculator({ service, onClose }: CostCalculatorProps
   const estimatedCost = Math.round(sqftEquivalent * service.rate);
   const hasArea = areaNum > 0;
 
-  const whatsappURL = hasBasePrice
-    ? buildBasePriceWhatsAppURL(service.name, service.basePrice as number)
-    : buildWhatsAppURL(service.name, areaNum, unit, sqftEquivalent, estimatedCost);
+  const whatsappURL = buildQuoteWhatsAppURL(service.name, {
+    ...(hasBasePrice
+      ? { basePrice: service.basePrice as number }
+      : { area: areaNum, unit, sqftEquivalent, estimatedCost }),
+    name: name.trim(),
+    phone: phone.trim(),
+    address: address.trim(),
+  });
 
   const handleClose = () => {
     setIsOpen(false);
     setTimeout(onClose, 300);
   };
+
+  const inputClass = "w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all placeholder:text-gray-400";
 
   return (
     <div
@@ -83,7 +137,7 @@ export default function CostCalculator({ service, onClose }: CostCalculatorProps
       onClick={handleClose}
     >
       <div
-        className={`bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transition-all duration-300 ${
+        className={`bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto transition-all duration-300 ${
           isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-8"
@@ -91,7 +145,7 @@ export default function CostCalculator({ service, onClose }: CostCalculatorProps
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-4">
+        <div className="flex items-center justify-between p-6 pb-4 sticky top-0 bg-white rounded-t-3xl z-10">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 bg-accent/10 rounded-xl flex items-center justify-center text-accent">
               <ServiceModalIcon icon={service.icon} />
@@ -138,25 +192,6 @@ export default function CostCalculator({ service, onClose }: CostCalculatorProps
                   Base price, subject to inspection
                 </p>
               </div>
-
-              {/* Disclaimer */}
-              <p className="text-xs text-gray-400 mb-5">
-                * This is an approximate estimate. Final pricing may vary based on
-                site inspection, material requirements, and project complexity.
-              </p>
-
-              {/* WhatsApp CTA */}
-              <a
-                href={whatsappURL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 w-full bg-whatsapp hover:bg-whatsapp-hover text-white py-4 rounded-2xl font-semibold text-lg transition-all hover:shadow-xl hover:shadow-whatsapp/20 hover:-translate-y-0.5 active:scale-[0.98]"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
-                Request Detailed Quote
-              </a>
             </>
           ) : (
             <>
@@ -230,35 +265,68 @@ export default function CostCalculator({ service, onClose }: CostCalculatorProps
                   <p className="text-sm text-gray-400 mt-1">Enter area above to see estimate</p>
                 )}
               </div>
-
-              {/* Disclaimer */}
-              <p className="text-xs text-gray-400 mb-5">
-                * This is an approximate estimate. Final pricing may vary based on
-                site inspection, material requirements, and project complexity.
-              </p>
-
-              {/* WhatsApp CTA */}
-              {hasArea ? (
-                <a
-                  href={whatsappURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 w-full bg-whatsapp hover:bg-whatsapp-hover text-white py-4 rounded-2xl font-semibold text-lg transition-all hover:shadow-xl hover:shadow-whatsapp/20 hover:-translate-y-0.5 active:scale-[0.98]"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  Request Detailed Quote
-                </a>
-              ) : (
-                <div className="flex items-center justify-center gap-3 w-full bg-gray-200 text-gray-400 py-4 rounded-2xl font-semibold text-lg cursor-not-allowed">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  Enter area to get quote
-                </div>
-              )}
             </>
+          )}
+
+          {/* Your Details Section */}
+          <div className="mb-5">
+            <p className="flex items-center gap-1.5 text-xs font-semibold text-gray-medium uppercase tracking-wider mb-3">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Your Details <span className="text-gray-400 font-normal normal-case">(optional)</span>
+            </p>
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={inputClass}
+                placeholder="Your name"
+              />
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className={inputClass}
+                placeholder="Phone number"
+              />
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className={inputClass}
+                placeholder="Property address / city"
+              />
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <p className="text-xs text-gray-400 mb-5">
+            * This is an approximate estimate. Final pricing may vary based on
+            site inspection, material requirements, and project complexity.
+          </p>
+
+          {/* WhatsApp CTA */}
+          {hasBasePrice || hasArea ? (
+            <a
+              href={whatsappURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full bg-whatsapp hover:bg-whatsapp-hover text-white py-4 rounded-2xl font-semibold text-lg transition-all hover:shadow-xl hover:shadow-whatsapp/20 hover:-translate-y-0.5 active:scale-[0.98]"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              Request Detailed Quote
+            </a>
+          ) : (
+            <div className="flex items-center justify-center gap-3 w-full bg-gray-200 text-gray-400 py-4 rounded-2xl font-semibold text-lg cursor-not-allowed">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              Enter area to get quote
+            </div>
           )}
         </div>
       </div>

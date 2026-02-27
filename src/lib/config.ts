@@ -37,7 +37,7 @@ export const siteConfig = {
     },
     {
       city: "Lahore",
-      address: "Johar Town, Lahore",
+      address: "Industrial Area Gajjumata, Lahore",
       isHQ: false,
     },
   ],
@@ -68,7 +68,7 @@ export const siteConfig = {
       id: "water-proofing",
       name: "Water Proofing",
       icon: "droplets",
-      rate: 55, // PKR per sq ft
+      rate: 45, // PKR per sq ft
       description:
         "Advanced polymer-based coatings that create an impenetrable barrier against water leakage and seepage.",
       features: [
@@ -115,7 +115,7 @@ export const siteConfig = {
       id: "walls-treatment",
       name: "Walls Water & Heat Proofing",
       icon: "brick",
-      rate: 40, // PKR per sq ft
+      rate: 45, // PKR per sq ft
       description:
         "Chemical sheets and coatings for exterior walls to prevent dampness, seepage, and heat transfer.",
       features: [
@@ -236,7 +236,7 @@ export const siteConfig = {
   // SOCIAL LINKS (optional)
   // ============================================================
   social: {
-    facebook: "https://facebook.com/falconchemicals",
+    facebook: "https://www.facebook.com/share/1E9KFmwcWk/",
     instagram: "https://instagram.com/falconchemicals",
     youtube: "",
   },
