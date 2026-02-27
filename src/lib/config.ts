@@ -58,7 +58,7 @@ export const siteConfig = {
         "Thermal insulation treatments that reflect sunlight and reduce indoor temperature significantly, lowering energy costs.",
       features: [
         "UV reflective coating",
-        "Reduces temperature by 15-20°F",
+        "Reduces temperature by 5-6°F",
         "Energy cost reduction",
         "5-year warranty",
       ],
