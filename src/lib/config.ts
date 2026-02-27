@@ -37,7 +37,7 @@ export const siteConfig = {
     },
     {
       city: "Lahore",
-      address: "Industrial Area Gajjumata, Lahore",
+      address: "Falcon Chemical, Industrial Area Gajjumata, Lahore",
       isHQ: false,
     },
   ],
