@@ -1,0 +1,6 @@
+# Falcon Chemical Construction - Robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://falconchemicals.ltd/sitemap.xml
